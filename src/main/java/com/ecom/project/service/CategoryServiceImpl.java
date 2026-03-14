@@ -1,49 +1,49 @@
 package com.ecom.project.service;
 
-import com.ecom.project.model.CategoryDTO;
+import com.ecom.project.model.Category;
+import com.ecom.project.repo.CategoryRepo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
 
-    private final List<CategoryDTO> categories = new ArrayList<>();
+    private final CategoryRepo categoryRepo;
+
+    public CategoryServiceImpl(CategoryRepo categoryRepo) {
+        this.categoryRepo = categoryRepo;
+    }
 
 
     @Override
-    public List<CategoryDTO> getAllCategories() {
-        return categories;
+    public List<Category> getAllCategories() {
+        return this.categoryRepo.findAll();
     }
 
     @Override
-    public void addCategory(CategoryDTO categoryDTO) {
-        categoryDTO.setCategoryId(categories.size()+1);
-        categories.add(categoryDTO);
+    public void addCategory(Category category) {
+        this.categoryRepo.save(category);
     }
 
     @Override
-    public String updateCategory(int categoryId,CategoryDTO categoryDTO) {
-        CategoryDTO category = categories.stream().
-                filter(c -> c.getCategoryId() == categoryId)
-                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
-
-        category.setCategoryName(categoryDTO.getCategoryName());
-
+    public String updateCategory(int categoryId, Category categoryDTO) {
+        Optional<Category> category = categoryRepo.findById(categoryId);
+        Category c = category.orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
+        c.setCategoryName(categoryDTO.getCategoryName());
+        this.categoryRepo.save(c);
         return "updated category with id " + categoryId + "successfully";
 
     }
 
     @Override
     public String deleteCategory(int categoryId) {
-        CategoryDTO category = categories.stream()
-                        .filter(c-> c.getCategoryId() == categoryId).findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
+        Optional<Category> category = categoryRepo.findById(categoryId);
+        Category c = category.orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
 
-        categories.remove(category);
+        this.categoryRepo.delete(c);
 
         return "category with " + categoryId + " deleted successfully.";
     }

@@ -1,15 +1,14 @@
 package com.ecom.project.controller;
 
-import com.ecom.project.model.CategoryDTO;
+import com.ecom.project.model.Category;
 import com.ecom.project.service.CategoryServiceImpl;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api")
 public class CategoryController {
 
@@ -20,18 +19,18 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    public ResponseEntity<List<CategoryDTO>> getCategory(){
+    public ResponseEntity<List<Category>> getCategory(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @PostMapping("/admin/add-category")
-    public ResponseEntity<String> addCategory(@RequestBody CategoryDTO categoryDTO){
-        categoryService.addCategory(categoryDTO);
+    public ResponseEntity<String> addCategory(@RequestBody Category category){
+        categoryService.addCategory(category);
         return ResponseEntity.ok("added successfully");
     }
 
     @PutMapping("/admin/update-category/{categoryId}")
-    public ResponseEntity<String> updateCategory(@PathVariable int categoryId,@RequestBody CategoryDTO category){
+    public ResponseEntity<String> updateCategory(@PathVariable int categoryId,@RequestBody Category category){
         try{
             return ResponseEntity.ok(categoryService.updateCategory(categoryId,category));
         } catch (ResponseStatusException e) {

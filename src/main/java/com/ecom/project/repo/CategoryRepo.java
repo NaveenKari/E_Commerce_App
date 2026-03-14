@@ -1,12 +1,8 @@
 package com.ecom.project.repo;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.ecom.project.model.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Getter
-@Setter
-public class CategoryRepo {
-    private String categoryId;
-    private String categoryName;
 
+public interface CategoryRepo extends JpaRepository<Category, Integer> {
 }
