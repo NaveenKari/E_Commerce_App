@@ -2,9 +2,9 @@ package com.ecom.project.controller;
 
 import com.ecom.project.model.Category;
 import com.ecom.project.service.CategoryServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,27 +24,19 @@ public class CategoryController {
     }
 
     @PostMapping("/admin/add-category")
-    public ResponseEntity<String> addCategory(@RequestBody Category category){
+    public ResponseEntity<String> addCategory(@Valid @RequestBody Category category){
         categoryService.addCategory(category);
         return ResponseEntity.ok("added successfully");
     }
 
     @PutMapping("/admin/update-category/{categoryId}")
-    public ResponseEntity<String> updateCategory(@PathVariable int categoryId,@RequestBody Category category){
-        try{
+    public ResponseEntity<String> updateCategory(@PathVariable int categoryId,
+                                                 @Valid @RequestBody Category category){
             return ResponseEntity.ok(categoryService.updateCategory(categoryId,category));
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
-        }
     }
 
     @DeleteMapping("/admin/delete-category/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable int categoryId){
-
-        try {
             return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
-        }catch (ResponseStatusException e){
-            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-        }
     }
 }
