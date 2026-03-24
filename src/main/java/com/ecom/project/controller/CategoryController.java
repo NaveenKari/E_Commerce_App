@@ -1,6 +1,8 @@
 package com.ecom.project.controller;
 
 import com.ecom.project.model.Category;
+import com.ecom.project.payload.CategoryDTO;
+import com.ecom.project.payload.CategoryResponseDTO;
 import com.ecom.project.service.CategoryServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,24 +21,24 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    public ResponseEntity<List<Category>> getCategory(){
+    public ResponseEntity<CategoryResponseDTO> getCategory(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @PostMapping("/admin/add-category")
-    public ResponseEntity<String> addCategory(@Valid @RequestBody Category category){
-        categoryService.addCategory(category);
-        return ResponseEntity.ok("added successfully");
+    public ResponseEntity<CategoryDTO> addCategory(@Valid @RequestBody CategoryDTO category){
+        CategoryDTO categoryDTO = categoryService.addCategory(category);
+        return ResponseEntity.ok(categoryDTO);
     }
 
     @PutMapping("/admin/update-category/{categoryId}")
-    public ResponseEntity<String> updateCategory(@PathVariable int categoryId,
-                                                 @Valid @RequestBody Category category){
-            return ResponseEntity.ok(categoryService.updateCategory(categoryId,category));
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable int categoryId,
+                                                 @Valid @RequestBody CategoryDTO categoryDTO){
+            return ResponseEntity.ok(categoryService.updateCategory(categoryId,categoryDTO));
     }
 
     @DeleteMapping("/admin/delete-category/{categoryId}")
-    public ResponseEntity<String> deleteCategory(@PathVariable int categoryId){
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable int categoryId){
             return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
     }
 }
