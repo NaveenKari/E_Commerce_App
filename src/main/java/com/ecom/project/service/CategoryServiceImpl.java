@@ -7,6 +7,10 @@ import com.ecom.project.payload.CategoryDTO;
 import com.ecom.project.payload.CategoryResponseDTO;
 import com.ecom.project.repo.CategoryRepo;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +28,14 @@ public class CategoryServiceImpl implements CategoryService{
 
 
     @Override
-    public CategoryResponseDTO getAllCategories() {
-        List<Category> categoryList = this.categoryRepo.findAll();
+    public CategoryResponseDTO getAllCategories(Integer pageSize,Integer pageNumber,String sortBy,String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                                ? Sort.by(sortBy).ascending()
+                                : Sort.by(sortBy).descending();
+        Pageable pageDetails = PageRequest.of(pageNumber,pageSize,sortByAndOrder);
+        Page<Category> categoryPage = this.categoryRepo.findAll(pageDetails);
+
+        List<Category> categoryList = categoryPage.getContent();
         if(categoryList.isEmpty()){
             throw new ApiException("No categories available");
         }
@@ -36,6 +46,11 @@ public class CategoryServiceImpl implements CategoryService{
 
         CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO();
         categoryResponseDTO.setCategoryDTOList(categoryDTOList);
+        categoryResponseDTO.setPageNumber(categoryPage.getNumber());
+        categoryResponseDTO.setPageSize(categoryPage.getSize());
+        categoryResponseDTO.setTotalElements(categoryPage.getTotalElements());
+        categoryResponseDTO.setTotalPages(categoryPage.getTotalPages());
+        categoryResponseDTO.setLastPage(categoryPage.isLast());
         return categoryResponseDTO;
     }
 

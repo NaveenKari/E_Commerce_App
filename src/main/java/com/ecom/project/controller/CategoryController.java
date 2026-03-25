@@ -1,6 +1,5 @@
 package com.ecom.project.controller;
 
-import com.ecom.project.model.Category;
 import com.ecom.project.payload.CategoryDTO;
 import com.ecom.project.payload.CategoryResponseDTO;
 import com.ecom.project.service.CategoryServiceImpl;
@@ -8,7 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static com.ecom.project.config.AppConstants.*;
 
 @RestController
 @RequestMapping("/api")
@@ -21,8 +20,11 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    public ResponseEntity<CategoryResponseDTO> getCategory(){
-        return ResponseEntity.ok(categoryService.getAllCategories());
+    public ResponseEntity<CategoryResponseDTO> getCategory(@RequestParam(name = "pageNumber",defaultValue = PAGE_NUMBER,required = false) Integer pageNumber,
+                                                           @RequestParam(name = "pageSize", defaultValue = PAGE_SIZE,required = false) Integer pageSize,
+                                                           @RequestParam(name = "sortBy",defaultValue = SORT_BY,required = false) String sortBy,
+                                                           @RequestParam(name = "sortOrder",defaultValue = SORT_ORDER,required = false) String sortOrder){
+        return ResponseEntity.ok(categoryService.getAllCategories(pageSize,pageNumber,sortBy,sortOrder));
     }
 
     @PostMapping("/admin/add-category")
