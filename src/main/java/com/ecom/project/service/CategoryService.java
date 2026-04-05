@@ -10,8 +10,8 @@ public interface CategoryService {
 
     CategoryDTO addCategory(CategoryDTO category);
 
-    CategoryDTO updateCategory(int categoryId, CategoryDTO category);
+    CategoryDTO updateCategory(long categoryId, CategoryDTO category);
 
-    CategoryDTO deleteCategory(int categoryId);
+    CategoryDTO deleteCategory(long categoryId);
 
 }
