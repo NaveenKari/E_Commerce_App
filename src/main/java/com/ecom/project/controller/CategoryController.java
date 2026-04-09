@@ -22,7 +22,7 @@ public class CategoryController {
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponseDTO> getCategory(@RequestParam(name = "pageNumber",defaultValue = PAGE_NUMBER,required = false) Integer pageNumber,
                                                            @RequestParam(name = "pageSize", defaultValue = PAGE_SIZE,required = false) Integer pageSize,
-                                                           @RequestParam(name = "sortBy",defaultValue = SORT_BY,required = false) String sortBy,
+                                                           @RequestParam(name = "sortBy",defaultValue = CATEGORY_SORT_BY,required = false) String sortBy,
                                                            @RequestParam(name = "sortOrder",defaultValue = SORT_ORDER,required = false) String sortOrder){
         return ResponseEntity.ok(categoryService.getAllCategories(pageSize,pageNumber,sortBy,sortOrder));
     }
