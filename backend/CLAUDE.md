@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Java Spring Boot 4.0.3 e-commerce REST API using Java 21, Spring Security with JWT, Spring Data JPA, and H2 in-memory database.
+Java Spring Boot 4.0.3 e-commerce REST API using Java 21, Spring Security with JWT, Spring Data JPA, and PostgreSQL.
 
 ## Build & Run Commands
 
@@ -25,7 +25,7 @@ Java Spring Boot 4.0.3 e-commerce REST API using Java 21, Spring Security with J
 ./mvnw clean install -DskipTests
 ```
 
-The H2 console is available at `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:ecom`).
+PostgreSQL must be running locally on port 5432 with a database named `ecom`. Update `spring.datasource.username` and `spring.datasource.password` in `application.properties` before running.
 
 ## Architecture
 
@@ -82,7 +82,7 @@ com.ecom.project/
 
 | Property | Value |
 |---|---|
-| DB URL | `jdbc:h2:mem:ecom` |
+| DB URL | `jdbc:postgresql://localhost:5432/ecom` |
 | DDL auto | `update` |
 | Image path | `images/` |
 | JWT expiry | 3 000 000 ms (~50 min) |

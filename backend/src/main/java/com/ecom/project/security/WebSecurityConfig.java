@@ -71,7 +71,6 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(authorizeRequests ->
             authorizeRequests.requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
-                    .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     //.requestMatchers("/api/public/**").permitAll()
                     //.requestMatchers("/api/admin/**").permitAll()
@@ -83,8 +82,7 @@ public class WebSecurityConfig {
         http.addFilterBefore(authenticationJwtTokenFilter(),UsernamePasswordAuthenticationFilter.class);
 
         http.headers(headers -> headers
-                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin
-                )
+                .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
         );
 
         return http.build();
