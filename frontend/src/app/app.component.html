@@ -1,0 +1,16 @@
+<main class="mx-auto max-w-5xl space-y-10 p-10">
+  <h1 class="text-5xl">Style Guide Preview</h1>
+
+  <section class="flex items-center gap-4">
+    <app-button variant="primary">Shop Now</app-button>
+    <app-button variant="secondary">Learn More</app-button>
+    <app-badge variant="sale">-20%</app-badge>
+    <app-badge variant="new">New</app-badge>
+  </section>
+
+  <section class="grid max-w-xs grid-cols-1 gap-6">
+    <app-product-card [product]="previewProduct" />
+  </section>
+
+  <router-outlet />
+</main>

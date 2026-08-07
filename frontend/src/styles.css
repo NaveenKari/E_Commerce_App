@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-body bg-neutral-50 text-neutral-900;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display font-semibold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-primary-500 px-6 py-3 font-body font-semibold text-white transition-transform hover:scale-105 hover:bg-primary-600 hover:shadow-lg active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-neutral-300 bg-white px-6 py-3 font-body font-semibold text-neutral-900 transition hover:border-neutral-400 hover:shadow-md;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide;
+  }
+}
