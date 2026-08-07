@@ -26,6 +26,18 @@ export const routes: Routes = [
             (m) => m.NotAuthorizedComponent
           ),
       },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./features/storefront/product-list/product-list.component').then((m) => m.ProductListComponent),
+      },
+      {
+        path: 'products/:id',
+        loadComponent: () =>
+          import('./features/storefront/product-detail/product-detail.component').then(
+            (m) => m.ProductDetailComponent
+          ),
+      },
     ],
   },
 ];

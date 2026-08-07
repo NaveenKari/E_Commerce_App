@@ -1,16 +1,27 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-storefront-shell',
   standalone: true,
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, RouterOutlet, FormsModule],
   template: `
     <div class="flex min-h-screen flex-col">
       <header class="border-b border-neutral-200 bg-white">
-        <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <nav class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-4">
           <a routerLink="/" class="font-display text-2xl font-bold text-primary-600">Bazaar</a>
+
+          <form class="hidden flex-1 max-w-md sm:block" (ngSubmit)="onSearch()">
+            <input
+              type="search"
+              name="search"
+              placeholder="Search products..."
+              [(ngModel)]="searchTerm"
+              class="w-full rounded-full border border-neutral-300 px-4 py-2 text-sm focus:border-primary-500 focus:outline-none"
+            />
+          </form>
 
           <div class="flex items-center gap-6 text-sm font-medium text-neutral-700">
             <a routerLink="/products" class="hover:text-primary-600">Shop</a>
@@ -41,10 +52,21 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class StorefrontShellComponent {
   year = new Date().getFullYear();
+  searchTerm = '';
 
-  constructor(public auth: AuthService) {}
+  constructor(
+    public auth: AuthService,
+    private router: Router
+  ) {}
 
   signout(): void {
     this.auth.signout().subscribe();
+  }
+
+  onSearch(): void {
+    const term = this.searchTerm.trim();
+    if (term) {
+      this.router.navigate(['/products'], { queryParams: { q: term } });
+    }
   }
 }
