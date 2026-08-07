@@ -10,6 +10,8 @@ import java.io.IOException;
 public interface ProductService {
     ProductDTO addProduct(ProductDTO product, Long categoryId);
 
+    ProductDTO getProductById(Long productId);
+
     ProductResponseDTO getAllProducts(Integer pageNumber,Integer pageSize, String sortBy, String sortOrder);
 
     ProductResponseDTO getProductsByCategory(Long categoryId,Integer pageNumber,Integer pageSize, String sortBy, String sortOrder);

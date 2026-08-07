@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class OrderController {
@@ -33,5 +35,18 @@ public class OrderController {
                 orderRequestDTO.getPgResponseMessage()
         );
         return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/order/users")
+    public ResponseEntity<List<OrderDTO>> getOrdersByUser() {
+        String emailId = authUtil.loggedInEmail();
+        List<OrderDTO> orders = orderService.getOrdersByUser(emailId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/orders")
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        List<OrderDTO> orders = orderService.getAllOrders();
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 }

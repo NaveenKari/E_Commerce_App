@@ -1,8 +1,11 @@
 package com.ecom.project.exception;
 
 import com.ecom.project.payload.ExceptionApiResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,6 +41,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionApiResponse> ApiException(ApiException e){
         ExceptionApiResponse apiResponse = new ExceptionApiResponse(e.getMessage(),false);
         return new ResponseEntity<ExceptionApiResponse>(apiResponse,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String,String>> customConstraintViolationException(ConstraintViolationException e){
+        Map<String,String> response = new HashMap<>();
+
+        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+            String fieldName = violation.getPropertyPath().toString();
+            response.put(fieldName, violation.getMessage());
+        }
+
+        return new ResponseEntity<Map<String,String>>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ExceptionApiResponse> customHttpMessageNotReadableException(HttpMessageNotReadableException e){
+        ExceptionApiResponse apiResponse = new ExceptionApiResponse("Malformed request body", false);
+        return new ResponseEntity<ExceptionApiResponse>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
 }

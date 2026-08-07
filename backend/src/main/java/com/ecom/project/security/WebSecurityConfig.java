@@ -24,6 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Set;
 
@@ -37,6 +38,9 @@ public class WebSecurityConfig {
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
+    @Autowired
+    private AuthAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -62,9 +66,12 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+    public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(csrf -> csrf.disable())
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint(unauthorizedHandler)
+                    .accessDeniedHandler(accessDeniedHandler))
             .sessionManagement(
                     session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
@@ -72,8 +79,8 @@ public class WebSecurityConfig {
             authorizeRequests.requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
-                    //.requestMatchers("/api/public/**").permitAll()
-                    //.requestMatchers("/api/admin/**").permitAll()
+                    .requestMatchers("/api/public/**").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .requestMatchers("/api/test/**").permitAll()
                     .requestMatchers("/images/**").permitAll()
                     .anyRequest().authenticated());
