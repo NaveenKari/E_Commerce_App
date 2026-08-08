@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-storefront-shell',
@@ -31,7 +32,16 @@ import { AuthService } from '../../core/services/auth.service';
               @if (auth.isAdmin()) {
                 <a routerLink="/admin" class="hover:text-primary-600">Admin</a>
               }
-              <a routerLink="/cart" class="hover:text-primary-600">Cart</a>
+              <a routerLink="/cart" class="relative hover:text-primary-600">
+                Cart
+                @if (cartService.itemCount() > 0) {
+                  <span
+                    class="absolute -right-3 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-[10px] font-bold text-white"
+                  >
+                    {{ cartService.itemCount() }}
+                  </span>
+                }
+              </a>
               <button type="button" class="hover:text-primary-600" (click)="signout()">Sign out</button>
             } @else {
               <a routerLink="/login" class="hover:text-primary-600">Sign in</a>
@@ -56,8 +66,17 @@ export class StorefrontShellComponent {
 
   constructor(
     public auth: AuthService,
+    public cartService: CartService,
     private router: Router
-  ) {}
+  ) {
+    effect(() => {
+      if (this.auth.isAuthenticated()) {
+        this.cartService.loadCart().subscribe();
+      } else if (this.auth.hydrated()) {
+        this.cartService.clearLocalState();
+      }
+    });
+  }
 
   signout(): void {
     this.auth.signout().subscribe();

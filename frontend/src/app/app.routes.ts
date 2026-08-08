@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { StorefrontShellComponent } from './layout/storefront-shell/storefront-shell.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,11 @@ export const routes: Routes = [
           import('./features/storefront/product-detail/product-detail.component').then(
             (m) => m.ProductDetailComponent
           ),
+      },
+      {
+        path: 'cart',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/storefront/cart/cart.component').then((m) => m.CartComponent),
       },
     ],
   },

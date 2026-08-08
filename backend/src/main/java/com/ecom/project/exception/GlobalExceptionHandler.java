@@ -61,4 +61,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<ExceptionApiResponse>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
+    // Safety net: without this, any unhandled exception falls through to the container's
+    // default /error forward, which re-runs the security filter chain, loses the request's
+    // JWT cookie, and surfaces as a misleading 401 instead of the real error.
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionApiResponse> customException(Exception e){
+        ExceptionApiResponse apiResponse = new ExceptionApiResponse("Something went wrong", false);
+        return new ResponseEntity<ExceptionApiResponse>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

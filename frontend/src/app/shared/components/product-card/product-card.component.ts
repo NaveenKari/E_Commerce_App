@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, Input, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Product } from '../../../core/models/product.model';
 import { BadgeComponent } from '../badge/badge.component';
+import { AuthService } from '../../../core/services/auth.service';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-card',
@@ -36,11 +38,11 @@ import { BadgeComponent } from '../badge/badge.component';
         <button
           type="button"
           class="btn-primary mt-2 w-full py-2 text-sm"
-          [disabled]="product.quantity === 0"
+          [disabled]="product.quantity === 0 || adding()"
           [class.opacity-50]="product.quantity === 0"
-          (click)="addToCart.emit(product)"
+          (click)="onAddToCart()"
         >
-          {{ product.quantity === 0 ? 'Out of stock' : 'Add to cart' }}
+          {{ product.quantity === 0 ? 'Out of stock' : added() ? 'Added!' : 'Add to cart' }}
         </button>
       </div>
     </div>
@@ -48,5 +50,30 @@ import { BadgeComponent } from '../badge/badge.component';
 })
 export class ProductCardComponent {
   @Input({ required: true }) product!: Product;
-  @Output() addToCart = new EventEmitter<Product>();
+
+  adding = signal(false);
+  added = signal(false);
+
+  constructor(
+    private cartService: CartService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  onAddToCart(): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
+    this.adding.set(true);
+    this.cartService.addOrIncrement(this.product.productId).subscribe({
+      next: () => {
+        this.adding.set(false);
+        this.added.set(true);
+        setTimeout(() => this.added.set(false), 1500);
+      },
+      error: () => this.adding.set(false),
+    });
+  }
 }
