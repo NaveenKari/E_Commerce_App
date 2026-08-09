@@ -29,6 +29,7 @@ import { CartService } from '../../core/services/cart.service';
 
             @if (auth.isAuthenticated()) {
               <a routerLink="/orders" class="hover:text-primary-600">Orders</a>
+              <a routerLink="/account/addresses" class="hover:text-primary-600">Addresses</a>
               @if (auth.isAdmin()) {
                 <a routerLink="/admin" class="hover:text-primary-600">Admin</a>
               }

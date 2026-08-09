@@ -43,10 +43,7 @@ public class AddressServiceImpl implements AddressService{
         Address address = addressRepo.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
 
-        User loggedInUser = authUtil.loggedInUser();
-        if (!address.getUser().getUserId().equals(loggedInUser.getUserId())) {
-            throw new ResourceNotFoundException("Address", "addressId", addressId);
-        }
+        assertOwnedByLoggedInUser(address, addressId);
 
         return modelMapper.map(address, AddressDTO.class);
     }
@@ -63,6 +60,8 @@ public class AddressServiceImpl implements AddressService{
     public AddressDTO updateAddress(Long addressId, AddressDTO addressDTO) {
         Address addressFromDatabase = addressRepo.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
+
+        assertOwnedByLoggedInUser(addressFromDatabase, addressId);
 
         addressFromDatabase.setCity(addressDTO.getCity());
         addressFromDatabase.setPincode(addressDTO.getPincode());
@@ -86,6 +85,8 @@ public class AddressServiceImpl implements AddressService{
         Address addressFromDatabase = addressRepo.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
 
+        assertOwnedByLoggedInUser(addressFromDatabase, addressId);
+
         User user = addressFromDatabase.getUser();
         user.getAddresses().removeIf(address -> address.getAddressId().equals(addressId));
         userRepo.save(user);
@@ -93,5 +94,12 @@ public class AddressServiceImpl implements AddressService{
         addressRepo.delete(addressFromDatabase);
 
         return "Address deleted successfully with addressId: " + addressId;
+    }
+
+    private void assertOwnedByLoggedInUser(Address address, Long addressId) {
+        User loggedInUser = authUtil.loggedInUser();
+        if (!address.getUser().getUserId().equals(loggedInUser.getUserId())) {
+            throw new ResourceNotFoundException("Address", "addressId", addressId);
+        }
     }
 }
