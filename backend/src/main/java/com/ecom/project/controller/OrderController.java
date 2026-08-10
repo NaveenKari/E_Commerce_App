@@ -3,6 +3,7 @@ package com.ecom.project.controller;
 
 import com.ecom.project.payload.OrderDTO;
 import com.ecom.project.payload.OrderRequestDTO;
+import com.ecom.project.payload.OrderStatusUpdateRequest;
 import com.ecom.project.service.OrderService;
 import com.ecom.project.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,18 @@ public class OrderController {
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         List<OrderDTO> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/orders/{orderId}/status")
+    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatusUpdateRequest request) {
+        OrderDTO order = orderService.updateOrderStatus(orderId, request.getStatus());
+        return new ResponseEntity<>(order, HttpStatus.OK);
+    }
+
+    @GetMapping("/order/users/{orderId}")
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long orderId) {
+        String emailId = authUtil.loggedInEmail();
+        OrderDTO order = orderService.getOrderByIdForUser(emailId, orderId);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 }

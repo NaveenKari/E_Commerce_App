@@ -21,30 +21,42 @@ const PAGE_SIZE = 12;
       <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
         <h1 class="text-4xl">{{ heading() }}</h1>
 
-        <div class="flex flex-wrap gap-2">
-          <a
-            routerLink="/products"
-            class="rounded-full px-4 py-1.5 text-sm font-medium"
-            [class.bg-primary-500]="!activeCategoryId()"
-            [class.text-white]="!activeCategoryId()"
-            [class.bg-neutral-100]="activeCategoryId()"
-            [class.text-neutral-700]="activeCategoryId()"
-          >
-            All
-          </a>
-          @for (category of categories(); track category.categoryId) {
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex flex-wrap gap-2">
             <a
-              [routerLink]="['/products']"
-              [queryParams]="{ category: category.categoryId }"
+              routerLink="/products"
               class="rounded-full px-4 py-1.5 text-sm font-medium"
-              [class.bg-primary-500]="activeCategoryId() === category.categoryId"
-              [class.text-white]="activeCategoryId() === category.categoryId"
-              [class.bg-neutral-100]="activeCategoryId() !== category.categoryId"
-              [class.text-neutral-700]="activeCategoryId() !== category.categoryId"
+              [class.bg-primary-500]="!activeCategoryId()"
+              [class.text-white]="!activeCategoryId()"
+              [class.bg-neutral-100]="activeCategoryId()"
+              [class.text-neutral-700]="activeCategoryId()"
             >
-              {{ category.categoryName }}
+              All
             </a>
-          }
+            @for (category of categories(); track category.categoryId) {
+              <a
+                [routerLink]="['/products']"
+                [queryParams]="{ category: category.categoryId }"
+                class="rounded-full px-4 py-1.5 text-sm font-medium"
+                [class.bg-primary-500]="activeCategoryId() === category.categoryId"
+                [class.text-white]="activeCategoryId() === category.categoryId"
+                [class.bg-neutral-100]="activeCategoryId() !== category.categoryId"
+                [class.text-neutral-700]="activeCategoryId() !== category.categoryId"
+              >
+                {{ category.categoryName }}
+              </a>
+            }
+          </div>
+
+          <select
+            class="rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-medium focus:border-primary-500 focus:outline-none"
+            [value]="sortValue()"
+            (change)="onSortChange($any($event.target).value)"
+          >
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
         </div>
       </div>
 
@@ -72,8 +84,16 @@ export class ProductListComponent implements OnInit {
   totalPages = signal(0);
   activeCategoryId = signal<number | null>(null);
   searchKeyword = signal<string | null>(null);
+  sortBy = signal<string | undefined>(undefined);
+  sortOrder = signal<'asc' | 'desc' | undefined>(undefined);
 
   heading = () => (this.searchKeyword() ? `Results for "${this.searchKeyword()}"` : 'Shop all products');
+
+  sortValue(): string {
+    if (this.sortBy() === 'price' && this.sortOrder() === 'asc') return 'price-asc';
+    if (this.sortBy() === 'price' && this.sortOrder() === 'desc') return 'price-desc';
+    return 'newest';
+  }
 
   constructor(
     private productService: ProductService,
@@ -92,13 +112,17 @@ export class ProductListComponent implements OnInit {
     const categoryParam = params.get('category');
     const keyword = params.get('q');
     const page = Number(params.get('page') ?? 0);
+    const sortBy = params.get('sortBy') ?? undefined;
+    const sortOrder = (params.get('sortOrder') as 'asc' | 'desc' | null) ?? undefined;
 
     this.activeCategoryId.set(categoryParam ? Number(categoryParam) : null);
     this.searchKeyword.set(keyword);
     this.pageNumber.set(page);
+    this.sortBy.set(sortBy);
+    this.sortOrder.set(sortOrder);
     this.loading.set(true);
 
-    const pageParams = { pageNumber: page, pageSize: PAGE_SIZE };
+    const pageParams = { pageNumber: page, pageSize: PAGE_SIZE, sortBy, sortOrder };
 
     const request$ = keyword
       ? this.productService.searchProducts(keyword, pageParams)
@@ -122,6 +146,20 @@ export class ProductListComponent implements OnInit {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { page },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onSortChange(value: string): void {
+    const sortMap: Record<string, { sortBy: string | null; sortOrder: string | null }> = {
+      newest: { sortBy: null, sortOrder: null },
+      'price-asc': { sortBy: 'price', sortOrder: 'asc' },
+      'price-desc': { sortBy: 'price', sortOrder: 'desc' },
+    };
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { ...sortMap[value], page: null },
       queryParamsHandling: 'merge',
     });
   }

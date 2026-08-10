@@ -174,7 +174,9 @@ public class ProductServiceImpl implements ProductService {
         RetrProduct.setDiscount(product.getDiscount());
         RetrProduct.setPrice(product.getPrice());
         RetrProduct.setQuantity(product.getQuantity());
-        RetrProduct.setImage(product.getImage());
+        if (product.getImage() != null && !product.getImage().isBlank()) {
+            RetrProduct.setImage(product.getImage());
+        }
         RetrProduct.setSpecialPrice(product.getSpecialPrice());
 
         Product updatedProduct = productRepository.save(RetrProduct);

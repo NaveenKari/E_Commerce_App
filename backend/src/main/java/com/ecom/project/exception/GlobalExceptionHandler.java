@@ -3,6 +3,8 @@ package com.ecom.project.exception;
 import com.ecom.project.payload.ExceptionApiResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -16,6 +18,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,String>> customMethodArgumentNotValidException(MethodArgumentNotValidException e){
@@ -66,6 +70,7 @@ public class GlobalExceptionHandler {
     // JWT cookie, and surfaces as a misleading 401 instead of the real error.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionApiResponse> customException(Exception e){
+        logger.error("Unhandled exception", e);
         ExceptionApiResponse apiResponse = new ExceptionApiResponse("Something went wrong", false);
         return new ResponseEntity<ExceptionApiResponse>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }

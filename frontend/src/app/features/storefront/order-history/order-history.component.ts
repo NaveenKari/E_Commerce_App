@@ -26,7 +26,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       } @else {
         <div class="flex flex-col gap-4">
           @for (order of orders(); track order.orderId) {
-            <div class="card p-6">
+            <a [routerLink]="['/orders', order.orderId]" class="card block p-6">
               <div class="mb-4 flex items-center justify-between">
                 <div>
                   <p class="font-display font-semibold text-neutral-900">Order #{{ order.orderId }}</p>
@@ -48,7 +48,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
                 <span>Total</span>
                 <span>{{ order.totalAmount | currency }}</span>
               </div>
-            </div>
+            </a>
           }
         </div>
       }

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, SignupRequest, UserInfo } from '../models/auth.model';
+import { ChangePasswordRequest, LoginRequest, SignupRequest, UserInfo } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -54,5 +54,9 @@ export class AuthService {
 
   clearSession(): void {
     this.currentUserSignal.set(null);
+  }
+
+  changePassword(request: ChangePasswordRequest): Observable<unknown> {
+    return this.http.post(`${this.baseUrl}/change-password`, request);
   }
 }

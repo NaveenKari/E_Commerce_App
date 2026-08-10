@@ -119,6 +119,29 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream().map(this::mapOrderToDTO).toList();
     }
 
+    @Override
+    public OrderDTO updateOrderStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
+
+        order.setOrderStatus(status);
+        Order updatedOrder = orderRepository.save(order);
+
+        return mapOrderToDTO(updatedOrder);
+    }
+
+    @Override
+    public OrderDTO getOrderByIdForUser(String emailId, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
+
+        if (!order.getEmail().equals(emailId)) {
+            throw new ResourceNotFoundException("Order", "orderId", orderId);
+        }
+
+        return mapOrderToDTO(order);
+    }
+
     private OrderDTO mapOrderToDTO(Order order) {
         OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
         if (order.getAddress() != null) {

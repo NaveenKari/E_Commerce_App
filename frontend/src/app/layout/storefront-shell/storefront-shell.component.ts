@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
+import { WishlistService } from '../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-storefront-shell',
@@ -30,9 +31,20 @@ import { CartService } from '../../core/services/cart.service';
             @if (auth.isAuthenticated()) {
               <a routerLink="/orders" class="hover:text-primary-600">Orders</a>
               <a routerLink="/account/addresses" class="hover:text-primary-600">Addresses</a>
+              <a routerLink="/account" class="hover:text-primary-600">Account</a>
               @if (auth.isAdmin()) {
                 <a routerLink="/admin" class="hover:text-primary-600">Admin</a>
               }
+              <a routerLink="/wishlist" class="relative hover:text-primary-600">
+                Wishlist
+                @if (wishlistService.itemCount() > 0) {
+                  <span
+                    class="absolute -right-3 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-[10px] font-bold text-white"
+                  >
+                    {{ wishlistService.itemCount() }}
+                  </span>
+                }
+              </a>
               <a routerLink="/cart" class="relative hover:text-primary-600">
                 Cart
                 @if (cartService.itemCount() > 0) {
@@ -68,19 +80,22 @@ export class StorefrontShellComponent {
   constructor(
     public auth: AuthService,
     public cartService: CartService,
+    public wishlistService: WishlistService,
     private router: Router
   ) {
     effect(() => {
       if (this.auth.isAuthenticated()) {
         this.cartService.loadCart().subscribe();
+        this.wishlistService.load().subscribe();
       } else if (this.auth.hydrated()) {
         this.cartService.clearLocalState();
+        this.wishlistService.clearLocalState();
       }
     });
   }
 
   signout(): void {
-    this.auth.signout().subscribe();
+    this.auth.signout().subscribe(() => this.router.navigateByUrl('/login'));
   }
 
   onSearch(): void {

@@ -9,6 +9,15 @@ export interface Product {
   specialPrice: number;
 }
 
+export interface ProductInput {
+  productName: string;
+  description: string;
+  quantity: number;
+  price: number;
+  discount: number;
+  specialPrice: number;
+}
+
 export interface ProductResponse {
   productList: Product[];
   pageNumber: number;

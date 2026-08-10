@@ -9,7 +9,7 @@ export type ButtonVariant = 'primary' | 'secondary';
     <button
       [type]="type"
       [disabled]="disabled"
-      [class]="variant === 'primary' ? 'btn-primary' : 'btn-secondary'"
+      [class]="buttonClasses"
       [class.opacity-50]="disabled"
       [class.pointer-events-none]="disabled"
     >
@@ -21,4 +21,10 @@ export class ButtonComponent {
   @Input() variant: ButtonVariant = 'primary';
   @Input() type: 'button' | 'submit' = 'button';
   @Input() disabled = false;
+  @Input() customClass = '';
+
+  get buttonClasses(): string {
+    const base = this.variant === 'primary' ? 'btn-primary' : 'btn-secondary';
+    return this.customClass ? `${base} ${this.customClass}` : base;
+  }
 }

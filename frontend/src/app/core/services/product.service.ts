@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Product, ProductResponse } from '../models/product.model';
+import { Product, ProductInput, ProductResponse } from '../models/product.model';
 import { PageParams } from '../models/pagination.model';
 
 @Injectable({ providedIn: 'root' })
@@ -38,5 +38,23 @@ export class ProductService {
 
   getProductById(productId: number): Observable<Product> {
     return this.http.get<Product>(`${this.baseUrl}/public/products/${productId}`);
+  }
+
+  addProduct(categoryId: number, product: ProductInput): Observable<Product> {
+    return this.http.post<Product>(`${this.baseUrl}/admin/categories/${categoryId}/product`, product);
+  }
+
+  updateProduct(productId: number, product: ProductInput): Observable<Product> {
+    return this.http.put<Product>(`${this.baseUrl}/admin/product/${productId}`, product);
+  }
+
+  deleteProduct(productId: number): Observable<Product> {
+    return this.http.delete<Product>(`${this.baseUrl}/admin/delete/product/${productId}`);
+  }
+
+  uploadImage(productId: number, file: File): Observable<Product> {
+    const formData = new FormData();
+    formData.append('Image', file);
+    return this.http.put<Product>(`${this.baseUrl}/products/${productId}/image`, formData);
   }
 }

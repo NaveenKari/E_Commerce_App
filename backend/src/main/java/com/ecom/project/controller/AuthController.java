@@ -1,11 +1,13 @@
 package com.ecom.project.controller;
 
+import com.ecom.project.exception.ApiException;
 import com.ecom.project.model.AppRoles;
 import com.ecom.project.model.Role;
 import com.ecom.project.model.User;
 import com.ecom.project.repo.RoleRepository;
 import com.ecom.project.repo.UserRepository;
 import com.ecom.project.security.jwt.JwtUtils;
+import com.ecom.project.security.request.ChangePasswordRequest;
 import com.ecom.project.security.request.LoginReq;
 import com.ecom.project.security.request.SignUpRequest;
 import com.ecom.project.security.response.MessageResponse;
@@ -71,7 +73,7 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .toList();
-        UserInfoResponse loginResponse = new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),roles);
+        UserInfoResponse loginResponse = new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),userDetails.getEmail(),roles);
         return ResponseEntity
                 .ok().header(HttpHeaders.SET_COOKIE,jwtCookie.toString())
                 .body(loginResponse);
@@ -137,7 +139,7 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .toList();
-        UserInfoResponse loginResponse = new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),roles);
+        UserInfoResponse loginResponse = new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),userDetails.getEmail(),roles);
         return ResponseEntity
                 .ok()
                 .body(loginResponse);
@@ -151,6 +153,23 @@ public class AuthController {
        }else {
            return "";
        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request, Authentication authentication){
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new RuntimeException("Error: User Not Found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new ApiException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("Password updated successfully"));
     }
 
     @PostMapping("/signout")

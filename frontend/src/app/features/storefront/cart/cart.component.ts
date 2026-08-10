@@ -5,6 +5,7 @@ import { CartService } from '../../../core/services/cart.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { resolveImageUrl } from '../../../core/utils/image-url';
 
 @Component({
   selector: 'app-cart',
@@ -26,7 +27,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         <div class="flex flex-col gap-4">
           @for (item of cart().products; track item.productId) {
             <div class="card flex items-center gap-4 p-4">
-              <img [src]="item.image" [alt]="item.productName" class="h-20 w-20 rounded-xl object-cover" />
+              <img [src]="resolveImageUrl(item.image)" [alt]="item.productName" class="h-20 w-20 rounded-xl object-cover" />
 
               <div class="flex-1">
                 <p class="font-display font-semibold text-neutral-900">{{ item.productName }}</p>
@@ -81,6 +82,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 export class CartComponent implements OnInit {
   loading = signal(true);
   pendingProductId = signal<number | null>(null);
+  resolveImageUrl = resolveImageUrl;
 
   cart;
 

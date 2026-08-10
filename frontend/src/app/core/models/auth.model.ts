@@ -1,7 +1,13 @@
 export interface UserInfo {
   id: number;
   username: string;
+  email: string;
   roles: string[];
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
 }
 
 export interface LoginRequest {
