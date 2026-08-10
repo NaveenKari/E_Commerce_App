@@ -24,8 +24,8 @@ const EMPTY_FORM: ProductInput = {
   standalone: true,
   imports: [FormsModule, CurrencyPipe, ButtonComponent, LoadingSpinnerComponent, EmptyStateComponent],
   template: `
-    <div class="p-8">
-      <div class="mb-8 flex items-center justify-between">
+    <div class="p-4 sm:p-6 lg:p-8">
+      <div class="mb-8 flex flex-wrap items-center justify-between gap-3">
         <h1 class="text-3xl">Products</h1>
         @if (!showForm()) {
           <app-button (click)="startCreate()">Add product</app-button>
@@ -130,41 +130,43 @@ const EMPTY_FORM: ProductInput = {
         <app-empty-state title="No products yet" />
       } @else {
         <div class="card overflow-hidden">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-neutral-50 text-neutral-500">
-              <tr>
-                <th class="px-4 py-3">Image</th>
-                <th class="px-4 py-3">Name</th>
-                <th class="px-4 py-3">Price</th>
-                <th class="px-4 py-3">Stock</th>
-                <th class="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (product of products(); track product.productId) {
-                <tr class="border-t border-neutral-100">
-                  <td class="px-4 py-3">
-                    <img [src]="resolveImageUrl(product.image)" [alt]="product.productName" class="h-12 w-12 rounded-lg object-cover" />
-                  </td>
-                  <td class="px-4 py-3">{{ product.productName }}</td>
-                  <td class="px-4 py-3">{{ product.specialPrice | currency }}</td>
-                  <td class="px-4 py-3">{{ product.quantity }}</td>
-                  <td class="px-4 py-3 text-right">
-                    <label class="mr-4 cursor-pointer font-medium text-neutral-600 hover:text-neutral-800">
-                      Upload image
-                      <input type="file" accept="image/*" class="hidden" (change)="onImageSelected($event, product.productId)" />
-                    </label>
-                    <button type="button" class="mr-4 font-medium text-primary-600 hover:text-primary-700" (click)="startEdit(product)">
-                      Edit
-                    </button>
-                    <button type="button" class="font-medium text-red-500 hover:text-red-600" (click)="deleteProduct(product.productId)">
-                      Delete
-                    </button>
-                  </td>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[640px] text-left text-sm">
+              <thead class="bg-neutral-50 text-neutral-500">
+                <tr>
+                  <th class="px-4 py-3">Image</th>
+                  <th class="px-4 py-3">Name</th>
+                  <th class="px-4 py-3">Price</th>
+                  <th class="px-4 py-3">Stock</th>
+                  <th class="px-4 py-3 text-right">Actions</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (product of products(); track product.productId) {
+                  <tr class="border-t border-neutral-100">
+                    <td class="px-4 py-3">
+                      <img [src]="resolveImageUrl(product.image)" [alt]="product.productName" class="h-12 w-12 rounded-lg object-cover" />
+                    </td>
+                    <td class="px-4 py-3">{{ product.productName }}</td>
+                    <td class="px-4 py-3">{{ product.specialPrice | currency }}</td>
+                    <td class="px-4 py-3">{{ product.quantity }}</td>
+                    <td class="px-4 py-3 text-right whitespace-nowrap">
+                      <label class="mr-4 cursor-pointer font-medium text-neutral-600 hover:text-neutral-800">
+                        Upload image
+                        <input type="file" accept="image/*" class="hidden" (change)="onImageSelected($event, product.productId)" />
+                      </label>
+                      <button type="button" class="mr-4 font-medium text-primary-600 hover:text-primary-700" (click)="startEdit(product)">
+                        Edit
+                      </button>
+                      <button type="button" class="font-medium text-red-500 hover:text-red-600" (click)="deleteProduct(product.productId)">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       }
     </div>

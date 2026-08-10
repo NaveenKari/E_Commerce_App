@@ -9,7 +9,7 @@ import { OrderService } from '../../../core/services/order.service';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="p-8">
+    <div class="p-4 sm:p-6 lg:p-8">
       <h1 class="mb-8 text-3xl">Dashboard</h1>
 
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">

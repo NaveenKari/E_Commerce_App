@@ -12,7 +12,7 @@ const ORDER_STATUSES = ['Order Accepted', 'Processing', 'Shipped', 'Out for Deli
   standalone: true,
   imports: [CurrencyPipe, DatePipe, LoadingSpinnerComponent, EmptyStateComponent],
   template: `
-    <div class="p-8">
+    <div class="p-4 sm:p-6 lg:p-8">
       <h1 class="mb-8 text-3xl">Orders</h1>
 
       @if (loading()) {
@@ -21,42 +21,44 @@ const ORDER_STATUSES = ['Order Accepted', 'Processing', 'Shipped', 'Out for Deli
         <app-empty-state title="No orders yet" />
       } @else {
         <div class="card overflow-hidden">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-neutral-50 text-neutral-500">
-              <tr>
-                <th class="px-4 py-3">Order</th>
-                <th class="px-4 py-3">Customer</th>
-                <th class="px-4 py-3">Date</th>
-                <th class="px-4 py-3">Total</th>
-                <th class="px-4 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (order of orders(); track order.orderId) {
-                <tr class="border-t border-neutral-100">
-                  <td class="px-4 py-3">#{{ order.orderId }}</td>
-                  <td class="px-4 py-3">{{ order.email }}</td>
-                  <td class="px-4 py-3">{{ order.orderDate | date: 'mediumDate' }}</td>
-                  <td class="px-4 py-3">{{ order.totalAmount | currency }}</td>
-                  <td class="px-4 py-3">
-                    <select
-                      class="rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-medium focus:border-primary-500 focus:outline-none"
-                      [value]="order.orderStatus"
-                      [disabled]="updatingOrderId() === order.orderId"
-                      (change)="onStatusChange(order, $any($event.target).value)"
-                    >
-                      @for (status of statuses; track status) {
-                        <option [value]="status">{{ status }}</option>
-                      }
-                      @if (!statuses.includes(order.orderStatus)) {
-                        <option [value]="order.orderStatus">{{ order.orderStatus }}</option>
-                      }
-                    </select>
-                  </td>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[640px] text-left text-sm">
+              <thead class="bg-neutral-50 text-neutral-500">
+                <tr>
+                  <th class="px-4 py-3">Order</th>
+                  <th class="px-4 py-3">Customer</th>
+                  <th class="px-4 py-3">Date</th>
+                  <th class="px-4 py-3">Total</th>
+                  <th class="px-4 py-3">Status</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (order of orders(); track order.orderId) {
+                  <tr class="border-t border-neutral-100">
+                    <td class="px-4 py-3">#{{ order.orderId }}</td>
+                    <td class="px-4 py-3">{{ order.email }}</td>
+                    <td class="px-4 py-3">{{ order.orderDate | date: 'mediumDate' }}</td>
+                    <td class="px-4 py-3">{{ order.totalAmount | currency }}</td>
+                    <td class="px-4 py-3">
+                      <select
+                        class="rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-medium focus:border-primary-500 focus:outline-none"
+                        [value]="order.orderStatus"
+                        [disabled]="updatingOrderId() === order.orderId"
+                        (change)="onStatusChange(order, $any($event.target).value)"
+                      >
+                        @for (status of statuses; track status) {
+                          <option [value]="status">{{ status }}</option>
+                        }
+                        @if (!statuses.includes(order.orderStatus)) {
+                          <option [value]="order.orderStatus">{{ order.orderStatus }}</option>
+                        }
+                      </select>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       }
     </div>

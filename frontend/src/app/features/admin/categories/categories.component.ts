@@ -11,10 +11,10 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
   standalone: true,
   imports: [FormsModule, ButtonComponent, LoadingSpinnerComponent, EmptyStateComponent],
   template: `
-    <div class="p-8">
+    <div class="p-4 sm:p-6 lg:p-8">
       <h1 class="mb-8 text-3xl">Categories</h1>
 
-      <form class="card mb-8 flex items-end gap-4 p-6" (ngSubmit)="onSubmit()">
+      <form class="card mb-8 flex flex-col items-stretch gap-4 p-6 sm:flex-row sm:items-end" (ngSubmit)="onSubmit()">
         <div class="flex flex-1 flex-col gap-1">
           <label class="text-sm font-medium text-neutral-700">{{ editingId() ? 'Rename category' : 'New category name' }}</label>
           <input
@@ -24,10 +24,12 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
             class="rounded-xl border border-neutral-300 px-4 py-2.5 focus:border-primary-500 focus:outline-none"
           />
         </div>
-        <app-button type="submit" [disabled]="saving()">{{ editingId() ? 'Save' : 'Add' }}</app-button>
-        @if (editingId()) {
-          <app-button variant="secondary" (click)="cancelEdit()">Cancel</app-button>
-        }
+        <div class="flex gap-4">
+          <app-button type="submit" [disabled]="saving()">{{ editingId() ? 'Save' : 'Add' }}</app-button>
+          @if (editingId()) {
+            <app-button variant="secondary" (click)="cancelEdit()">Cancel</app-button>
+          }
+        </div>
       </form>
 
       @if (errorMessage()) {
@@ -40,29 +42,31 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         <app-empty-state title="No categories yet" />
       } @else {
         <div class="card overflow-hidden">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-neutral-50 text-neutral-500">
-              <tr>
-                <th class="px-4 py-3">Name</th>
-                <th class="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (category of categories(); track category.categoryId) {
-                <tr class="border-t border-neutral-100">
-                  <td class="px-4 py-3">{{ category.categoryName }}</td>
-                  <td class="px-4 py-3 text-right">
-                    <button type="button" class="mr-4 font-medium text-primary-600 hover:text-primary-700" (click)="startEdit(category)">
-                      Edit
-                    </button>
-                    <button type="button" class="font-medium text-red-500 hover:text-red-600" (click)="deleteCategory(category.categoryId)">
-                      Delete
-                    </button>
-                  </td>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-neutral-50 text-neutral-500">
+                <tr>
+                  <th class="px-4 py-3">Name</th>
+                  <th class="px-4 py-3 text-right">Actions</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (category of categories(); track category.categoryId) {
+                  <tr class="border-t border-neutral-100">
+                    <td class="px-4 py-3">{{ category.categoryName }}</td>
+                    <td class="px-4 py-3 text-right">
+                      <button type="button" class="mr-4 font-medium text-primary-600 hover:text-primary-700" (click)="startEdit(category)">
+                        Edit
+                      </button>
+                      <button type="button" class="font-medium text-red-500 hover:text-red-600" (click)="deleteCategory(category.categoryId)">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       }
     </div>
